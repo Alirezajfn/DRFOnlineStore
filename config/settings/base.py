@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
+    'drf_spectacular',
 
     # Local
     'users.apps.UsersConfig',
@@ -104,5 +105,3 @@ STATIC_URL = '/static/'
 # Default primary key field type
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-AUTH_USER_MODEL = "users.User"
