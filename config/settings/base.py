@@ -20,7 +20,10 @@ INSTALLED_APPS = [
     # Third Party
     'rest_framework',
     'django_filters',
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
+
+    # Local
+    'users.apps.UsersConfig',
 
 ]
 
