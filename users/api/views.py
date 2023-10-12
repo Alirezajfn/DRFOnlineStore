@@ -3,6 +3,7 @@ from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.viewsets import GenericViewSet
 
+from users.api.filters import SelfFilterBacked
 from users.api.serializers.register import RegisterUserSerializer
 from users.api.serializers.user import UserRetrieveUpdateSerializer
 
@@ -13,7 +14,7 @@ class UserViewSet(mixins.CreateModelMixin,
                   GenericViewSet):
     permission_classes = [IsAuthenticated]
     queryset = get_user_model().objects.all()
-    # TODO: add filter_backends
+    filter_backends = [SelfFilterBacked]
 
     lookup_field = 'username'
     lookup_url_kwarg = 'username'
