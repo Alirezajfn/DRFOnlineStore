@@ -3,7 +3,8 @@ from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework_simplejwt.tokens import RefreshToken
+
+from authentications.services.jwt import get_jwt_tokens_for_user
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
@@ -54,13 +55,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super(RegisterUserSerializer, self).to_representation(instance)
-        refresh = RefreshToken.for_user(instance)
-        data.update({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        })
-        # TODO: write functions for jwt tokens
-        # tokens = get_jwt_tokens_for_user(instance)
-        # data.update(tokens)
+        tokens = get_jwt_tokens_for_user(instance)
+        data.update(tokens)
 
         return data
