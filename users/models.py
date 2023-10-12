@@ -6,8 +6,8 @@ from users.managers import CustomUserManager
 
 class User(AbstractUser):
     objects = CustomUserManager()
-    REQUIRED_FIELDS = []
     email = models.EmailField(unique=True)
+    REQUIRED_FIELDS = ['email']
 
     class Meta:
         indexes = [
