@@ -1,4 +1,3 @@
-from . import LOGGING_DIR
 from .base import *
 from .third_party import *
 
@@ -33,12 +32,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'file': {
-            'level': 'WARNING',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOGGING_DIR, 'app.log'),
-            'formatter': 'standard',
-        },
         'console': {
             'level': 'WARNING',
             'class': 'logging.StreamHandler',
