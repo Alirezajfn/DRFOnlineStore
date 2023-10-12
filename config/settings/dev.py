@@ -39,10 +39,15 @@ LOGGING = {
             'filename': os.path.join(LOGGING_DIR, 'app.log'),
             'formatter': 'standard',
         },
+        'console': {
+            'level': 'WARNING',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
+            'handlers': ['console'],
             'level': 'WARNING',
             'propagate': True,
         },
