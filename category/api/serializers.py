@@ -12,6 +12,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = [
             'name',
             'parent',
+            'children',
         ]
 
     def validate(self, attrs):
