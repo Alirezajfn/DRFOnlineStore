@@ -20,10 +20,6 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             'confirm_password'
         ]
 
-        extra_kwargs = {
-            'username': {'read_only': True}
-        }
-
     def validate(self, attrs):
         username = attrs.get('username', None)
         email = attrs['email']
