@@ -10,7 +10,13 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+            suffix = 1
+            while Category.objects.filter(slug=slugify(self.name)).exists():
+                suffix += 1
+                self.slug = slugify(self.name) + '-' + str(suffix)
         super(Category, self).save(*args, **kwargs)
 
     def __str__(self):
+        if self.parent is None:
+            return self.name
         return f"{self.parent}/{self.name}"
