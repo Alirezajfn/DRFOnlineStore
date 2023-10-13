@@ -6,7 +6,7 @@ from .views import CategoryViewSet
 app_name = 'category'
 
 category_router = DefaultRouter()
-category_router.register('', CategoryViewSet, basename='user')
+category_router.register('', CategoryViewSet, basename='category')
 
 
 urlpatterns = [
