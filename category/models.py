@@ -10,8 +10,8 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-            suffix = 1
-            while Category.objects.filter(slug=slugify(self.name)).exists():
+            suffix = 0
+            while Category.objects.filter(slug=self.slug).exists():
                 suffix += 1
                 self.slug = slugify(self.name) + '-' + str(suffix)
         super(Category, self).save(*args, **kwargs)
