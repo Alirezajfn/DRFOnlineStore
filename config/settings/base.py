@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     # Local
     'users.apps.UsersConfig',
     'authentications.apps.AuthenticationsConfig',
+    'category.apps.CategoryConfig',
 
 ]
 
