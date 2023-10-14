@@ -2,6 +2,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 
+from product.api.pagination import DynamicProductsPagination
 from product.api.serializers import ProductCreateSerializer, ProductReadOnlySerializer, ProductUpdateSerializer
 from product.models import Product
 
@@ -9,6 +10,7 @@ from product.models import Product
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     lookup_field = 'slug'
+    pagination_class = DynamicProductsPagination
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -29,6 +31,7 @@ class ProductViewSet(ModelViewSet):
 class ProductCategoryListView(ListAPIView):
     serializer_class = ProductReadOnlySerializer
     permission_classes = [AllowAny]
+    pagination_class = DynamicProductsPagination
 
     def get_queryset(self):
         category_slug = self.kwargs['category_slug']
