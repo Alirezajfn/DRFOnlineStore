@@ -9,6 +9,7 @@ from product.api.filters import ProductFilterBackend, ProductFilterSet
 from product.api.pagination import DynamicProductsPagination
 from product.api.serializers import ProductCreateSerializer, ProductReadOnlySerializer, ProductUpdateSerializer
 from product.models import Product
+from product.services.permissions import IsSuperuserOrOwner
 
 
 class ProductViewSet(ModelViewSet):
@@ -30,8 +31,9 @@ class ProductViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             permission_classes = (AllowAny,)
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = (IsSuperuserOrOwner,)
         else:
-            # TODO: Add IsOwner permission
             permission_classes = (IsAdminUser,)
         return [permission() for permission in permission_classes]
 
