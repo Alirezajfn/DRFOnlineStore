@@ -1,7 +1,8 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import filters
+from rest_framework import filters, status
 from django_filters.rest_framework import DjangoFilterBackend
 
 from product.api.filters import ProductFilterBackend, ProductFilterSet
@@ -33,6 +34,18 @@ class ProductViewSet(ModelViewSet):
             # TODO: Add IsOwner permission
             permission_classes = (IsAdminUser,)
         return [permission() for permission in permission_classes]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance.sales_count > 0:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={'detail': 'This product cannot be deleted because it has sales.'}
+            )
+
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProductCategoryListView(ListAPIView):
