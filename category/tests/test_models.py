@@ -1,10 +1,9 @@
 from django.test import TestCase
-from model_bakery import baker
 
 from category.models import Category
 
 
-class UserManagerTests(TestCase):
+class CategoryTests(TestCase):
 
     def test_create_category(self):
         category = Category.objects.create(

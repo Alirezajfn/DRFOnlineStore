@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'authentications.apps.AuthenticationsConfig',
     'category.apps.CategoryConfig',
+    'product.apps.ProductConfig',
 
 ]
 
