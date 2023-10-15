@@ -280,3 +280,47 @@ class ProductTests(APITestCase):
         response = self.client.get(reverse('product:product-detail', args=['invalid-slug']))
 
         self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_product(self):
+        product = baker.make(Product)
+        response = self.client.delete(reverse('product:product-detail', args=[product.slug]))
+
+        self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEquals(Product.objects.count(), 0)
+
+    def test_delete_product_without_being_authenticated(self):
+        self.client.logout()
+        product = baker.make(Product)
+        response = self.client.delete(reverse('product:product-detail', args=[product.slug]))
+
+        self.assertEquals(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEquals(Product.objects.count(), 1)
+
+    def test_delete_product_without_being_superuser(self):
+        self.user.is_superuser = False
+        self.user.is_staff = True
+        self.user.save()
+        product = baker.make(Product)
+        response = self.client.delete(reverse('product:product-detail', args=[product.slug]))
+
+        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEquals(Product.objects.count(), 1)
+
+    def test_delete_product_by_creator(self):
+        self.user.is_superuser = False
+        self.user.is_staff = True
+        self.user.save()
+        product = baker.make(Product, creator=self.user)
+
+        self.client.force_login(self.user)
+        response = self.client.delete(reverse('product:product-detail', args=[product.slug]))
+
+        self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEquals(Product.objects.count(), 0)
+
+    def test_delete_product_with_sales_count_greater_than_zero(self):
+        product = baker.make(Product, sales_count=1)
+        response = self.client.delete(reverse('product:product-detail', args=[product.slug]))
+
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEquals(Product.objects.count(), 1)
