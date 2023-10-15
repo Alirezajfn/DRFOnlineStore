@@ -10,6 +10,15 @@ class ProductFilterBackend(BaseFilterBackend):
         return queryset.filter(is_active=True)
 
 
+class ProductCategoryFilterBackend(BaseFilterBackend):
+
+    def filter_queryset(self, request, queryset, view):
+        category_slug = request.query_params.get('category_slug')
+        if category_slug:
+            return queryset.filter(category_slug=category_slug)
+        return queryset
+
+
 class ProductFilterSet(FilterSet):
     class Meta:
         model = Product

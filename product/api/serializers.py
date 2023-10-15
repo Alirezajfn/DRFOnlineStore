@@ -134,7 +134,7 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
-class ProductReadOnlySerializer(serializers.ModelSerializer):
+class ProductRetrieveSerializer(serializers.ModelSerializer):
     categories = serializers.SerializerMethodField(read_only=True)
     images = serializers.SerializerMethodField(read_only=True)
 
@@ -155,16 +155,31 @@ class ProductReadOnlySerializer(serializers.ModelSerializer):
         ]
         read_only_fields = fields
 
-    # remove images when action is list
-    def get_fields(self):
-        if self.context['view'].action == 'list':
-            fields = super(ProductReadOnlySerializer, self).get_fields()
-            fields.pop('images')
-            return fields
-        return super(ProductReadOnlySerializer, self).get_fields()
-
     def get_categories(self, obj):
         return obj.categories.values_list('slug', flat=True)
 
     def get_images(self, obj):
         return obj.images.values_list('image', flat=True)
+
+
+class ProductListSerializer(serializers.ModelSerializer):
+    categories = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Product
+        fields = [
+            'name',
+            'slug',
+            'description',
+            'price',
+            'stock_quantity',
+            'categories',
+            'create_time',
+            'modified_time',
+            'main_image',
+            'sales_count',
+        ]
+        read_only_fields = fields
+
+    def get_categories(self, obj):
+        return obj.categories.values_list('slug', flat=True)
