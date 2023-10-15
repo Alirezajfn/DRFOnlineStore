@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'authentications.apps.AuthenticationsConfig',
     'category.apps.CategoryConfig',
     'product.apps.ProductConfig',
+    'mail.apps.MailConfig',
 
 ]
 
