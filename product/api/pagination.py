@@ -10,5 +10,5 @@ class DynamicProductsPagination(PageNumberPagination):
         if request.user.is_staff:
             self.max_page_size = 1000
         else:
-            self.max_page_size = 2
+            self.max_page_size = 100
         return super().paginate_queryset(queryset, request, view)
