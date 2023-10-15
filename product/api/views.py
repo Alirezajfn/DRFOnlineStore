@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
@@ -5,6 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import filters, status
 from django_filters.rest_framework import DjangoFilterBackend
 
+from product.services.celery import send_mail_in_background
 from product.api.filters import ProductFilterBackend, ProductFilterSet
 from product.api.pagination import DynamicProductsPagination
 from product.api.serializers import ProductCreateSerializer, ProductReadOnlySerializer, ProductUpdateSerializer
@@ -48,6 +50,15 @@ class ProductViewSet(ModelViewSet):
 
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_create(self, serializer):
+        product = serializer.save()
+        admins = get_user_model().objects.filter(is_superuser=True, is_active=True)
+        send_mail_in_background.delay(
+            to_email=[admin.email for admin in admins],
+            message=f'New product added: {product.name}',
+            title=f'New product added: {product.name}'
+        )
 
 
 class ProductCategoryListView(ListAPIView):
