@@ -8,7 +8,6 @@ from django.core.mail.backends.smtp import EmailBackend
 
 logger = logging.getLogger(__name__)
 
-
 class MailSenderManager:
     def __init__(self, connection: EmailBackend = None):
         self.connection = connection
@@ -19,7 +18,7 @@ class MailSenderManager:
         try:
             successes = django_mail.send_mail(subject=title,
                                               message=message,
-                                              from_email=settings.EMAIL_HOST_USER,
+                                              from_email=settings.env('EMAIL_HOST_USER'),
                                               recipient_list=to_email,
                                               connection=self.connection,
                                               **kwargs
