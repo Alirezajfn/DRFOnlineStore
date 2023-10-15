@@ -16,7 +16,7 @@ class Product(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='products')
-    categories = models.ManyToManyField('category.Category', related_name='products', blank=True)
+    categories = models.ManyToManyField('category.Category', related_name='products', through='CategoryProduct')
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -37,3 +37,11 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return str(self.product)
+
+
+class CategoryProduct(models.Model):
+    category = models.ForeignKey('category.Category', on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.category}/{self.product}"

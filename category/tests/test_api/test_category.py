@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from category.models import Category
+from product.models import Product
 
 
 class CategoryTests(APITestCase):
@@ -89,6 +90,28 @@ class CategoryTests(APITestCase):
         self.assertEquals(response.status_code, status.HTTP_200_OK)
         self.assertEquals(Category.objects.count(), 2)
 
+    def test_update_category_without_being_creator(self):
+        category = baker.make(Category)
+        data = {
+            'name': 'New Category'
+        }
+        self.client.force_login(baker.make(get_user_model(), is_staff=True, is_superuser=False))
+        response = self.client.put(reverse('category:category-detail', args=[category.slug]), data)
+
+        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEquals(Category.objects.count(), 1)
+        self.assertNotEquals(Category.objects.first().name, 'New Category')
+
+    def test_update_category_by_creator(self):
+        category = baker.make(Category, creator=self.user)
+        data = {
+            'name': 'Category'
+        }
+        response = self.client.put(reverse('category:category-detail', args=[category.slug]), data)
+
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        self.assertEquals(Category.objects.count(), 1)
+
     def test_update_category_with_invalid_parent(self):
         category = baker.make(Category)
         data = {
@@ -160,3 +183,38 @@ class CategoryTests(APITestCase):
         self.assertEquals(response.status_code, status.HTTP_200_OK)
         self.assertEquals(len(response.data['children']), 5)
         self.assertEquals(Category.objects.filter(parent__slug=category.slug).count(), 5)
+
+    def test_delete_category_successfully(self):
+        category = baker.make(Category)
+
+        response = self.client.delete(reverse('category:category-detail', args=[category.slug]))
+
+        self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEquals(Category.objects.count(), 0)
+
+    def test_delete_category_without_being_creator(self):
+        category = baker.make(Category)
+        self.client.force_login(baker.make(get_user_model(), is_staff=True, is_superuser=False))
+
+        response = self.client.delete(reverse('category:category-detail', args=[category.slug]))
+
+        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEquals(Category.objects.count(), 1)
+
+    def test_delete_category_that_has_children(self):
+        category = baker.make(Category)
+        baker.make(Category, parent=category, _quantity=5)
+
+        response = self.client.delete(reverse('category:category-detail', args=[category.slug]))
+
+        self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEquals(Category.objects.count(), 5)
+
+    def test_delete_category_that_has_products(self):
+        category = baker.make(Category)
+        baker.make(Product, categories=[category], _quantity=5)
+
+        response = self.client.delete(reverse('category:category-detail', args=[category.slug]))
+
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEquals(Category.objects.count(), 1)

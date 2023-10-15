@@ -6,13 +6,16 @@ from category.models import Category
 
 class CategoryCreateSerializer(serializers.ModelSerializer):
     parent = serializers.SlugField(required=False)
+    creator = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Category
         fields = [
             'name',
             'parent',
-            'slug'
+            'slug',
+            'creator',
+            'description',
         ]
         read_only_fields = [
             'slug'
@@ -44,7 +47,8 @@ class CategoryUpdateSerializer(serializers.ModelSerializer):
         fields = [
             'name',
             'parent',
-            'slug'
+            'slug',
+            'description',
         ]
         read_only_fields = [
             'slug'
@@ -79,7 +83,8 @@ class CategoryListSerializer(serializers.ModelSerializer):
         fields = [
             'name',
             'slug',
-            'parent'
+            'parent',
+            'description'
         ]
 
 
@@ -93,11 +98,11 @@ class CategoryRetrieveSerializer(serializers.ModelSerializer):
             'name',
             'slug',
             'parent',
-            'children'
+            'children',
+            'description'
         ]
 
     def get_children(self, obj):
         children = Category.objects.filter(parent=obj)
         serializer = CategoryListSerializer(children, many=True)
         return serializer.data
-
