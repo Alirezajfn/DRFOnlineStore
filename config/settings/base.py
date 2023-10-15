@@ -65,11 +65,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'online_shop',
-        'USER': 'online_shop',
-        'PASSWORD': 'online_shop',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': env.str('DB_NAME', default='online_shop'),
+        'USER': env.str('DB_USER', default='online_shop'),
+        'PASSWORD': env.str('DB_PASSWORD', default='online_shop'),
+        'HOST': env.str('DB_HOST', default='localhost'),
+        'PORT': env.str('DB_PORT', default='5432'),
     }
 }
 # Password validation
