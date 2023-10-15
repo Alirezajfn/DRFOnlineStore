@@ -1,7 +1,9 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAdminUser
 
 from category.models import Category
+from .filters import CategoryFilterSet
 from .serializers import CategoryCreateSerializer, CategoryUpdateSerializer, CategoryListSerializer, \
     CategoryRetrieveSerializer
 
@@ -9,6 +11,8 @@ from .serializers import CategoryCreateSerializer, CategoryUpdateSerializer, Cat
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     lookup_field = 'slug'
+    filter_backends = (DjangoFilterBackend, )
+    filterset_class = CategoryFilterSet
 
     def get_serializer_class(self):
         if self.action == 'create':
