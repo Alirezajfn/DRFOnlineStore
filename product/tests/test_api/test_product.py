@@ -7,7 +7,6 @@ from django.urls import reverse
 from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APITestCase
-from unittest.mock import patch, MagicMock
 
 from product.models import Product
 from category.models import Category
