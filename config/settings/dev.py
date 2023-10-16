@@ -1,7 +1,7 @@
 from .base import *
 from .third_party import *
 
-DEBUG = env.bool("DEBUG", default=False)
+DEBUG = env.bool("DEBUG", default=True)
 SECRET_KEY = env.str("SECRET_KEY")
 ALLOWED_HOSTS = ['*']
 
