@@ -105,7 +105,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_URL = '/static/'
+STATIC_URL = 'api/static/'
+STATIC_ROOT = BASE_DIR.joinpath('statics')
+
+MEDIA_ROOT = BASE_DIR.joinpath('media')
+MEDIA_URL = 'api/media/'
 
 # Default primary key field type
 
