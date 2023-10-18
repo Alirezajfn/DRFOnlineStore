@@ -16,6 +16,10 @@ class Category(models.Model):
         verbose_name_plural = 'categories'
 
     def save(self, *args, **kwargs):
+        """
+        If slug is not set, set it to slugify(name).
+        If slug is set, check if it is unique, if not, add a suffix to it.
+        """
         if not self.slug:
             self.slug = slugify(self.name)
             suffix = 0

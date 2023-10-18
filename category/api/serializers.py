@@ -102,7 +102,7 @@ class CategoryRetrieveSerializer(serializers.ModelSerializer):
             'description'
         ]
 
-    def get_children(self, obj):
+    def get_children(self, obj) -> list:
         children = Category.objects.filter(parent=obj)
         serializer = CategoryListSerializer(children, many=True)
         return serializer.data

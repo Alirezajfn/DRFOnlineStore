@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
@@ -15,6 +16,15 @@ from product.models import Product
 from product.services.permissions import IsSuperuserOrOwner
 
 
+@extend_schema_view(
+    create=extend_schema(description='Create new Product by admin.'),
+    update=extend_schema(description='The admin or owner can update product details'),
+    partial_update=extend_schema(description='The admin or owner can update product details'),
+    destroy=extend_schema(description='The admin or owner can delete Product. '
+                                      'If the product has sales, it cannot be deleted.'),
+    list=extend_schema(description='The access is public. Anyone can see the list of products.'),
+    retrieve=extend_schema(description='The access is public. Anyone can see the detail of a product.'),
+)
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     lookup_field = 'slug'
@@ -55,6 +65,9 @@ class ProductViewSet(ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_create(self, serializer):
+        """
+        Send email to all active admins when a new product is created
+        """
         product = serializer.save()
         admins = get_user_model().objects.filter(is_superuser=True, is_active=True)
         send_mail_in_background.delay(
@@ -65,6 +78,9 @@ class ProductViewSet(ModelViewSet):
 
 
 class ProductCategoryListView(ListAPIView):
+    """
+    List of products in a category with category slug
+    """
     serializer_class = ProductListSerializer
     permission_classes = [AllowAny]
     pagination_class = DynamicProductsPagination

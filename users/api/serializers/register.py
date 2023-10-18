@@ -54,6 +54,9 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         return instance
 
     def to_representation(self, instance):
+        """
+        Add tokens to the response
+        """
         data = super(RegisterUserSerializer, self).to_representation(instance)
         tokens = get_jwt_tokens_for_user(instance)
         data.update(tokens)
