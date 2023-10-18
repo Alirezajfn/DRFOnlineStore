@@ -10,5 +10,5 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ['name', 'description']
     prepopulated_fields = {'slug': ('name',)}
     ordering = ['name', 'parent']
-    fields = ['name', 'parent', 'description', 'slug', 'create_time', 'modified_time', 'creator']
+    fields = ['name', 'parent', 'description', 'slug', 'create_time', 'modified_time', 'creatorx']
     readonly_fields = ['create_time', 'modified_time']

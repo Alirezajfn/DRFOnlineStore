@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
@@ -10,6 +11,18 @@ from .serializers import CategoryCreateSerializer, CategoryUpdateSerializer, Cat
     CategoryRetrieveSerializer
 
 
+@extend_schema_view(
+    create=extend_schema(description='Create new Category with name, slug, '
+                                     'description and parent slug by admin'),
+    update=extend_schema(description='The admin or owner can update name, '
+                                     'parent slug and description of Category'),
+    partial_update=extend_schema(description='The admin or owner can update name, '
+                                             'parent slug and description of Category'),
+    destroy=extend_schema(description='The admin or owner can delete Category. '
+                                      'If the category has product, it cannot be deleted.'),
+    list=extend_schema(description='The access is public. Anyone can see the list of categories.'),
+    retrieve=extend_schema(description='The access is public. Anyone can see the detail of a category.'),
+)
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     lookup_field = 'slug'
