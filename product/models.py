@@ -19,6 +19,10 @@ class Product(models.Model):
     categories = models.ManyToManyField('category.Category', related_name='products', through='CategoryProduct')
 
     def save(self, *args, **kwargs):
+        """
+        Create a unique slug for each product
+        If the slug is not unique, add a suffix to the slug
+        """
         if not self.slug:
             self.slug = slugify(self.name)
             suffix = 0

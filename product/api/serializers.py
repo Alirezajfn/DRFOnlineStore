@@ -41,10 +41,10 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             'images_list',
         ]
 
-    def get_categories_list(self, obj):
+    def get_categories_list(self, obj) -> list:
         return obj.categories.values_list('slug', flat=True)
 
-    def get_images_list(self, obj):
+    def get_images_list(self, obj) -> list:
         return obj.images.values_list('image', flat=True)
 
     def validate(self, attrs):
@@ -56,6 +56,9 @@ class ProductCreateSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        """
+        Create product and add categories and images to it if they are provided
+        """
         category_data = validated_data.pop('categories')
         images = validated_data.pop('images', None)
         product = Product.objects.create(**validated_data)
@@ -109,13 +112,17 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
 
         return attrs
 
-    def get_categories_list(self, obj):
+    def get_categories_list(self, obj) -> list:
         return obj.categories.values_list('slug', flat=True)
 
-    def get_images_list(self, obj):
+    def get_images_list(self, obj) -> list:
         return obj.images.values_list('image', flat=True)
 
     def update(self, instance, validated_data):
+        """
+        Update product and add categories and images to it if they are provided
+        If categories or images is blank, delete all of them
+        """
         category_data = validated_data.pop('categories', None)
         images = validated_data.pop('images', None)
         super().update(instance, validated_data)
@@ -155,10 +162,10 @@ class ProductRetrieveSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = fields
 
-    def get_categories(self, obj):
+    def get_categories(self, obj) -> list:
         return obj.categories.values_list('slug', flat=True)
 
-    def get_images(self, obj):
+    def get_images(self, obj) -> list:
         return obj.images.values_list('image', flat=True)
 
 
@@ -181,5 +188,5 @@ class ProductListSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = fields
 
-    def get_categories(self, obj):
+    def get_categories(self, obj) -> list:
         return obj.categories.values_list('slug', flat=True)
