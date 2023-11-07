@@ -1,0 +1,28 @@
+[
+    {
+        "model": "category.category",
+        "pk": 1,
+        "fields": {
+            "name": "Category 1",
+            "description": "Description for Category 1",
+            "parent": null,
+            "slug": "category-1",
+            "creator": 1,
+            "create_time": "2023-11-06T00:00:00Z",
+            "modified_time": "2023-11-06T00:00:00Z"
+        }
+    },
+    {
+        "model": "category.category",
+        "pk": 2,
+        "fields": {
+            "name": "Category 2",
+            "description": "Description for Category 2",
+            "parent": 1,
+            "slug": "category-2",
+            "creator": 2,
+            "create_time": "2023-11-06T00:00:00Z",
+            "modified_time": "2023-11-06T00:00:00Z"
+        }
+    },
+]
