@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 
 
 def create_initial_users(apps, schema_editor):
-    user = apps.get_model(get_user_model())
+    user = get_user_model()
     user.objects.create_superuser(
         username='admin',
         email='admin@example.com',
