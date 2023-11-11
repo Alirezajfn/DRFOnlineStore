@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission, Group
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -25,5 +26,56 @@ class UserRetrieveUpdateSerializer(serializers.ModelSerializer):
             exists = get_user_model().objects.filter(username=username).exists()
             if exists:
                 ValidationError(_('Chosen Username Exists'))
+
+        return attrs
+
+
+class PermissionReadOnlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Permission
+        fields = [
+            'codename',
+            'name',
+        ]
+        extra_kwargs = {
+            'codename': {'read_only': True},
+            'name': {'read_only': True},
+        }
+
+
+class GroupReadOnlySerializer(serializers.ModelSerializer):
+    permissions = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Group
+        fields = [
+            'name',
+            'permissions',
+
+        ]
+        extra_kwargs = {
+            'groups': {'read_only': True},
+            'permissions': {'read_only': True},
+        }
+
+    def get_permissions(self, obj):
+        return obj.permissions.values_list('codename', flat=True)
+
+
+class UserPermissionSerializer(serializers.Serializer):
+    permissions = serializers.ListField(child=serializers.CharField(max_length=255), required=False)
+    groups = serializers.ListField(child=serializers.CharField(max_length=255), required=False)
+
+    def validate(self, attrs):
+        permissions = attrs.get('permissions', [])
+        groups = attrs.get('groups', [])
+
+        for perm in permissions:
+            if not Permission.objects.filter(codename=perm).exists():
+                raise serializers.ValidationError("Permission does not exist.")
+
+        for group in groups:
+            if not Group.objects.filter(name=group).exists():
+                raise serializers.ValidationError("Group does not exist.")
 
         return attrs
