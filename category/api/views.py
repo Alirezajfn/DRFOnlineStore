@@ -39,6 +39,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return CategoryRetrieveSerializer
 
     def get_permissions(self):
+        if self.request.user.has_perm('category.add_category'):
+            return []
         if self.action in ['list', 'retrieve']:
             permission_classes = (AllowAny,)
         elif self.action in ['update', 'partial_update', 'destroy']:
