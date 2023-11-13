@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'category.apps.CategoryConfig',
     'product.apps.ProductConfig',
     'mail.apps.MailConfig',
+    'permissions.apps.PermissionsConfig',
 
 ]
 
