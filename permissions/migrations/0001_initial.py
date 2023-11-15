@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name='Permission',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('codename', models.CharField(blank=True, max_length=255, null=True)),
+                ('codename', models.CharField(db_index=True, max_length=255, unique=True)),
                 ('url', models.CharField(max_length=255)),
                 ('view', models.CharField(max_length=255)),
             ],
