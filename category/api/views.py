@@ -1,10 +1,11 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import viewsets, status
-from rest_framework.decorators import renderer_classes
+from rest_framework.decorators import renderer_classes, api_view
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from category.models import Category
 from permissions.services.decorators import view_permission_codename
@@ -65,6 +66,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 @view_permission_codename('add_category')
-@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
+@api_view(http_method_names=['GET'])
 def add_category(request):
-    return Response(status=status.HTTP_200_OK, data={"message": "Add category"})
+    return Response(status=status.HTTP_200_OK, data={'detail': 'You have permission to add category.'})
