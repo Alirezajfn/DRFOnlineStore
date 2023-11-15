@@ -1,18 +1,18 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Permission, Group
+from django.contrib.auth.models import Group
 from drf_spectacular.utils import extend_schema_view, extend_schema
 
 from rest_framework import mixins
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateAPIView, GenericAPIView
+from rest_framework.generics import ListAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from users.api.filters import SelfFilterBacked
 from users.api.serializers.register import RegisterUserSerializer
 from users.api.serializers.user import UserRetrieveUpdateSerializer, UserPermissionSerializer, \
-    PermissionReadOnlySerializer, GroupReadOnlySerializer
+    PermissionReadOnlySerializer
+from permissions.models import Permission
 
 
 @extend_schema_view(
@@ -57,9 +57,9 @@ class UserPermissionView(GenericAPIView):
         serializer = UserPermissionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         permissions = Permission.objects.filter(codename__in=serializer.validated_data['permissions'])
-        user.user_permissions.set(permissions)
-        groups = Group.objects.filter(name__in=serializer.validated_data['groups'])
-        user.groups.set(groups)
+        user.permissions_per_url.set(permissions)
+        # groups = Group.objects.filter(name__in=serializer.validated_data['groups'])
+        # user.groups.set(groups)
         return Response({'message': 'Permissions changed successfully'})
 
 
@@ -67,9 +67,3 @@ class GetAllPermissionsView(ListAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = PermissionReadOnlySerializer
     queryset = Permission.objects.all()
-
-
-class GetAllGroupsView(ListAPIView):
-    permission_classes = [IsAdminUser]
-    serializer_class = GroupReadOnlySerializer
-    queryset = Group.objects.all()
