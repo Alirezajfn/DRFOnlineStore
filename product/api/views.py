@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.utils.decorators import method_decorator
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser
@@ -7,6 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import filters, status
 from django_filters.rest_framework import DjangoFilterBackend
 
+from permissions.services.decorators import view_permission_codename
 from product.services.celery import send_mail_in_background
 from product.api.filters import ProductFilterBackend, ProductFilterSet, ProductCategoryFilterBackend
 from product.api.pagination import DynamicProductsPagination
@@ -77,6 +79,7 @@ class ProductViewSet(ModelViewSet):
         )
 
 
+@method_decorator(view_permission_codename('view_product_category_list'), name='dispatch')
 class ProductCategoryListView(ListAPIView):
     """
     List of products in a category with category slug

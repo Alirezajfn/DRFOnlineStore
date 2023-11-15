@@ -1,10 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import viewsets, status
+from rest_framework.decorators import renderer_classes
 from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.response import Response
 
 from category.models import Category
+from permissions.services.decorators import view_permission_codename
 from product.services.permissions import IsSuperuserOrOwner
 from .filters import CategoryFilterSet
 from .serializers import CategoryCreateSerializer, CategoryUpdateSerializer, CategoryListSerializer, \
@@ -59,3 +62,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
                 data={'detail': 'This category cannot be deleted because it has product.'}
             )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@view_permission_codename('add_category')
+@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
+def add_category(request):
+    return Response(status=status.HTTP_200_OK, data={"message": "Add category"})
