@@ -5,7 +5,7 @@ from django.urls import resolve
 from rest_framework_simplejwt import authentication
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 
-from permissions.models import Permission
+from permissions.models import PermissionPerUrls
 
 
 class URLPermissionCheckMiddleware:
@@ -25,8 +25,8 @@ class URLPermissionCheckMiddleware:
 
         if codename is not None:
             try:
-                permission = Permission.objects.get(codename=codename)
-            except Permission.DoesNotExist:
+                permission = PermissionPerUrls.objects.get(codename=codename)
+            except PermissionPerUrls.DoesNotExist:
                 return HttpResponseForbidden("Permission does not exist.")
             else:
                 if not user.permissions_per_url.filter(pk=permission.pk).exists():

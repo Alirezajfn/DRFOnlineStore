@@ -14,9 +14,11 @@ def get_all_urls():
             elif isinstance(pattern, URLPattern):
                 if hasattr(pattern.callback, 'codename'):
                     codename = pattern.callback.codename
+                    description = pattern.callback.description
                     urls.append({'url': prefix + pattern.pattern.regex.pattern,
                                  'codename': codename,
-                                 'view_name': pattern.callback.__name__})
+                                 'view': pattern.callback.__name__,
+                                 'description': description})
 
     _get_urls(resolver.url_patterns)
 

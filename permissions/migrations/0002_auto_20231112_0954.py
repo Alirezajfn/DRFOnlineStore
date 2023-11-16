@@ -7,8 +7,7 @@ from permissions.services.get_urls import get_all_urls
 
 def add_permissions(apps, schema_editor):
     Permission = apps.get_model('permissions', 'PermissionPerUrls')
-    for url in get_all_urls():
-        Permission.objects.create(codename=url['codename'], url=url['url'], view=url['view_name'])
+    Permission.objects.bulk_create([Permission(**permission) for permission in get_all_urls()])
 
 
 def remove_permissions(apps, schema_editor):
