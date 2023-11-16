@@ -4,7 +4,6 @@ from django.http import HttpResponseForbidden
 from django.urls import resolve
 from rest_framework_simplejwt import authentication
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
-from rest_framework_simplejwt.tokens import AccessToken
 
 from permissions.models import Permission
 
@@ -21,6 +20,8 @@ class URLPermissionCheckMiddleware:
             return self.get_response(request)
 
         user = self.get_jwt_user(request)
+        if user.is_superuser or user.is_staff:
+            return self.get_response(request)
 
         if codename is not None:
             try:
@@ -42,11 +43,3 @@ class URLPermissionCheckMiddleware:
         except AuthenticationFailed:
             user = AnonymousUser()
         return user
-        # jwt_authentication = JWTAuthentication()
-        # try:
-        #     print(request.headers.get('Authorization'))
-        #     jwt = AccessToken(request.headers.get('Authorization').split()[1])
-        #     user = jwt_authentication.get_user(jwt)
-        # except AuthenticationFailed:
-        #     user = AnonymousUser()
-        # return user
