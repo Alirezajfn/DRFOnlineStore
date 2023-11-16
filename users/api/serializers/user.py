@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from permissions.models import Permission
+from permissions.models import PermissionPerUrls
 
 
 class UserRetrieveUpdateSerializer(serializers.ModelSerializer):
@@ -34,7 +34,7 @@ class UserRetrieveUpdateSerializer(serializers.ModelSerializer):
 
 class PermissionReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Permission
+        model = PermissionPerUrls
         fields = [
             'codename',
             'name',
@@ -73,7 +73,7 @@ class UserPermissionSerializer(serializers.Serializer):
         groups = attrs.get('groups', [])
 
         for perm in permissions:
-            if not Permission.objects.filter(codename=perm).exists():
+            if not PermissionPerUrls.objects.filter(codename=perm).exists():
                 raise serializers.ValidationError("Permission does not exist.")
 
         for group in groups:

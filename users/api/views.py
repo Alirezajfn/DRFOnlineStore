@@ -12,7 +12,7 @@ from users.api.filters import SelfFilterBacked
 from users.api.serializers.register import RegisterUserSerializer
 from users.api.serializers.user import UserRetrieveUpdateSerializer, UserPermissionSerializer, \
     PermissionReadOnlySerializer
-from permissions.models import Permission
+from permissions.models import PermissionPerUrls
 
 
 @extend_schema_view(
@@ -56,14 +56,12 @@ class UserPermissionView(GenericAPIView):
         user = get_user_model().objects.get(username=username)
         serializer = UserPermissionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        permissions = Permission.objects.filter(codename__in=serializer.validated_data['permissions'])
+        permissions = PermissionPerUrls.objects.filter(codename__in=serializer.validated_data['permissions'])
         user.permissions_per_url.set(permissions)
-        # groups = Group.objects.filter(name__in=serializer.validated_data['groups'])
-        # user.groups.set(groups)
         return Response({'message': 'Permissions changed successfully'})
 
 
 class GetAllPermissionsView(ListAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = PermissionReadOnlySerializer
-    queryset = Permission.objects.all()
+    queryset = PermissionPerUrls.objects.all()

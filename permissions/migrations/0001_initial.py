@@ -12,12 +12,14 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Permission',
+            name='PermissionPerUrls',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('codename', models.CharField(db_index=True, max_length=255, unique=True)),
                 ('url', models.CharField(max_length=255)),
+                ('codename', models.CharField(db_index=True, max_length=255, unique=True)),
                 ('view', models.CharField(max_length=255)),
+                ('is_active', models.BooleanField(default=True)),
+                ('description', models.TextField(blank=True, null=True)),
             ],
         ),
     ]
