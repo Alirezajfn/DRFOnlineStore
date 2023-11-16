@@ -4,7 +4,6 @@ from permissions.models import Permission
 
 
 class Command(BaseCommand):
-    # create_permissions_per_url command creates permissions for all urls with bulk_create
     help = 'Create permissions for all urls'
 
     def handle(self, *args, **options):
