@@ -8,11 +8,9 @@ from permissions.services.get_urls import get_all_urls
 def add_permissions(apps, schema_editor):
     Permission = apps.get_model('permissions', 'PermissionPerUrls')
     UrlsGroup = apps.get_model('permissions', 'UrlsGroup')
-    urls, groups = get_all_urls()
-    for group in groups:
-        UrlsGroup.objects.create(name=group)
+    urls = get_all_urls()
     for url in urls:
-        group = UrlsGroup.objects.get(name=url['group'])
+        group, created = UrlsGroup.objects.get_or_create(name=url['group'])
         Permission.objects.create(url=url['url'],
                                   codename=url['codename'],
                                   view=url['view'],

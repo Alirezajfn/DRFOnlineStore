@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.urls import get_resolver
-from permissions.models import Permission
+from permissions.models import PermissionPerUrls, UrlsGroup
 
 
 class Command(BaseCommand):
@@ -19,9 +19,13 @@ class Command(BaseCommand):
                 if hasattr(pattern.callback, 'codename'):
                     if pattern.callback.codename == options['codename']:
                         nonlocal url
+                        group_name = pattern.callback.__module__.split('.')[0]
+                        group, _ = UrlsGroup.objects.get_or_create(name=group_name)
                         url = {'url': prefix + pattern.pattern.regex.pattern,
                                'codename': pattern.callback.codename,
-                               'view': pattern.callback.__name__}
+                               'view': pattern.callback.__name__,
+                               'description': pattern.callback.description,
+                               'group': group}
                         return
                 else:
                     if hasattr(pattern, 'url_patterns'):
@@ -31,5 +35,5 @@ class Command(BaseCommand):
         if url is None:
             raise CommandError('Permission does not exist.')
         else:
-            Permission.objects.create(**url)
+            PermissionPerUrls.objects.create(**url)
             self.stdout.write(self.style.SUCCESS('Successfully created permission for {}'.format(url['codename'])))
