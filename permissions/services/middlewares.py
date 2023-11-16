@@ -14,23 +14,22 @@ class URLPermissionCheckMiddleware:
 
     def __call__(self, request):
         resolver_match = resolve(request.path_info)
-        if hasattr(resolver_match.func, 'codename'):
-            codename = resolver_match.func.codename
+        url_pattern = resolver_match.route
+        if hasattr(resolver_match.func, 'codename') and PermissionPerUrls.objects.filter(codename=resolver_match.func.codename).exists():
+            permission = PermissionPerUrls.objects.get(codename=resolver_match.func.codename)
+        elif PermissionPerUrls.objects.filter(url=url_pattern).exists():
+            permission = PermissionPerUrls.objects.get(url=url_pattern)
         else:
             return self.get_response(request)
 
         user = self.get_jwt_user(request)
-        if user.is_superuser or user.is_staff:
+        if not user.is_authenticated:
+            return HttpResponseForbidden("Permission denied.")
+        elif user.is_superuser:
             return self.get_response(request)
 
-        if codename is not None:
-            try:
-                permission = PermissionPerUrls.objects.get(codename=codename)
-            except PermissionPerUrls.DoesNotExist:
-                return HttpResponseForbidden("Permission does not exist.")
-            else:
-                if not user.permissions_per_url.filter(pk=permission.pk).exists():
-                    return HttpResponseForbidden("Permission denied.")
+        if not user.permissions_per_url.filter(pk=permission.pk).exists():
+            return HttpResponseForbidden("Permission denied.")
         return self.get_response(request)
 
     @staticmethod
@@ -39,7 +38,9 @@ class URLPermissionCheckMiddleware:
         if user.is_authenticated:
             return user
         try:
-            user = authentication.JWTAuthentication().authenticate(request)[0]
+            user = authentication.JWTAuthentication().authenticate(request)
+            if user is None:
+                user = AnonymousUser()
         except AuthenticationFailed:
             user = AnonymousUser()
         return user

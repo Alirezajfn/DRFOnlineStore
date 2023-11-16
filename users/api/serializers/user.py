@@ -37,31 +37,12 @@ class PermissionReadOnlySerializer(serializers.ModelSerializer):
         model = PermissionPerUrls
         fields = [
             'codename',
-            'name',
+            'view',
         ]
         extra_kwargs = {
             'codename': {'read_only': True},
-            'name': {'read_only': True},
+            'view': {'read_only': True},
         }
-
-
-class GroupReadOnlySerializer(serializers.ModelSerializer):
-    permissions = serializers.SerializerMethodField(read_only=True)
-
-    class Meta:
-        model = Group
-        fields = [
-            'name',
-            'permissions',
-
-        ]
-        extra_kwargs = {
-            'groups': {'read_only': True},
-            'permissions': {'read_only': True},
-        }
-
-    def get_permissions(self, obj):
-        return obj.permissions.values_list('codename', flat=True)
 
 
 class UserPermissionSerializer(serializers.Serializer):
