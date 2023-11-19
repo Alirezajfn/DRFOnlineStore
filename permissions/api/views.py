@@ -1,7 +1,9 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 
+from permissions.api.filters import PermissionFilterSet
 from permissions.models import PermissionPerUrls
-from rest_framework import mixins, viewsets, status
+from rest_framework import mixins, viewsets, status, filters
 from rest_framework.permissions import IsAdminUser
 
 from permissions.api.serializers import PermissionReadOnlySerializer, PermissionCreateSerializer, PermissionUpdateSerializer
@@ -12,6 +14,9 @@ class PermissionListView(mixins.ListModelMixin,
                          viewsets.GenericViewSet):
     queryset = PermissionPerUrls.objects.all()
     permission_classes = [IsAdminUser]
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
+    filterset_class = PermissionFilterSet
+    ordering_fields = ('group__name', 'app_name')
 
     def get_serializer_class(self):
         if self.action == 'create':
