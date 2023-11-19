@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'category.apps.CategoryConfig',
     'product.apps.ProductConfig',
     'mail.apps.MailConfig',
+    'permissions.apps.PermissionsConfig',
 
 ]
 
@@ -39,6 +40,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'permissions.services.middlewares.URLPermissionCheckMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

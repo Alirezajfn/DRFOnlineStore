@@ -1,10 +1,14 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import viewsets, status
+from rest_framework.decorators import renderer_classes, api_view
 from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from category.models import Category
+from permissions.services.decorators import view_permission_codename
 from product.services.permissions import IsSuperuserOrOwner
 from .filters import CategoryFilterSet
 from .serializers import CategoryCreateSerializer, CategoryUpdateSerializer, CategoryListSerializer, \
@@ -39,6 +43,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return CategoryRetrieveSerializer
 
     def get_permissions(self):
+        if self.request.user.has_perm('category.add_category'):
+            return []
         if self.action in ['list', 'retrieve']:
             permission_classes = (AllowAny,)
         elif self.action in ['update', 'partial_update', 'destroy']:
@@ -57,3 +63,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
                 data={'detail': 'This category cannot be deleted because it has product.'}
             )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@view_permission_codename(name='add_category', description='Add category by admin', group='Categoryymn')
+@api_view(http_method_names=['GET'])
+def add_category(request):
+    return Response(status=status.HTTP_200_OK, data={'detail': 'You have permission to add category.'})
