@@ -19,12 +19,16 @@ class Command(BaseCommand):
                 if hasattr(pattern.callback, 'codename'):
                     if pattern.callback.codename == options['codename']:
                         nonlocal url
-                        group_name = pattern.callback.__module__.split('.')[0]
-                        group, _ = UrlsGroup.objects.get_or_create(name=group_name)
+                        app_name = pattern.callback.__module__.split('.')[0]
+                        group_name = pattern.callback.group
+                        group = None
+                        if group_name:
+                            group, _ = UrlsGroup.objects.get_or_create(name=group_name)
                         url = {'url': prefix + pattern.pattern.regex.pattern,
                                'codename': pattern.callback.codename,
                                'view': pattern.callback.__name__,
                                'description': pattern.callback.description,
+                               'app_name': app_name,
                                'group': group}
                         return
                 else:

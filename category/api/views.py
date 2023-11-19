@@ -65,7 +65,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@view_permission_codename(name='add_category', description='Add category by admin')
+@view_permission_codename(name='add_category', description='Add category by admin', group='Categoryymn')
 @api_view(http_method_names=['GET'])
 def add_category(request):
     return Response(status=status.HTTP_200_OK, data={'detail': 'You have permission to add category.'})

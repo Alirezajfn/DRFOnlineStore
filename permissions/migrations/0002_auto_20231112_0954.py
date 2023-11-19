@@ -10,11 +10,14 @@ def add_permissions(apps, schema_editor):
     UrlsGroup = apps.get_model('permissions', 'UrlsGroup')
     urls = get_all_urls()
     for url in urls:
-        group, created = UrlsGroup.objects.get_or_create(name=url['group'])
+        group = None
+        if url['group']:
+            group, created = UrlsGroup.objects.get_or_create(name=url['group'])
         Permission.objects.create(url=url['url'],
                                   codename=url['codename'],
                                   view=url['view'],
                                   description=url['description'],
+                                  app_name=url['app_name'],
                                   group=group)
 
 

@@ -15,13 +15,15 @@ def get_all_urls():
                 _get_urls(pattern.url_patterns, prefix + pattern.pattern.regex.pattern)
             elif isinstance(pattern, URLPattern):
                 if hasattr(pattern.callback, 'codename'):
-                    group_name = pattern.callback.__module__.split('.')[0]
+                    app_name = pattern.callback.__module__.split('.')[0]
+                    group_name = pattern.callback.group
                     codename = pattern.callback.codename
                     description = pattern.callback.description
                     urls.append({'url': prefix + pattern.pattern.regex.pattern,
                                  'codename': codename,
                                  'view': pattern.callback.__name__,
                                  'description': description,
+                                 'app_name': app_name,
                                  'group': group_name})
 
     _get_urls(resolver.url_patterns)
