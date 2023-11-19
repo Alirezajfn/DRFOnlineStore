@@ -28,6 +28,7 @@ class Migration(migrations.Migration):
                 ('view', models.CharField(max_length=255)),
                 ('is_active', models.BooleanField(default=True)),
                 ('description', models.TextField(blank=True, null=True)),
+                ('app_name', models.CharField(blank=True, max_length=255, null=True)),
             ],
         ),
         migrations.AddField(

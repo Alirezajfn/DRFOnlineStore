@@ -14,6 +14,7 @@ class PermissionPerUrls(models.Model):
     view = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     description = models.TextField(blank=True, null=True)
+    app_name = models.CharField(max_length=255, blank=True, null=True)
     group = models.ForeignKey(UrlsGroup, on_delete=models.CASCADE, related_name='permissions', null=True, blank=True)
 
     def __str__(self):
