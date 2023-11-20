@@ -33,6 +33,7 @@ class Migration(migrations.Migration):
                 ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups')),
                 ('permissions_per_url', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='permissions.permissionperurls', verbose_name='user permissions per url')),
                 ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.permission', verbose_name='user permissions')),
+                ('role', models.ManyToManyField(blank=True, help_text='Specific roles for this user.', related_name='user_set', related_query_name='user', to='permissions.role', verbose_name='roles')),
             ],
             options={
                 'indexes': [models.Index(fields=['email'], name='users_user_email_6f2530_idx')],
