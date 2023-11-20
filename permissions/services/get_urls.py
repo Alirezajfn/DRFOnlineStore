@@ -5,6 +5,10 @@ from permissions.models import UrlsGroup
 
 
 def get_all_urls():
+    """
+    Get all urls from the project
+    return: list of urls
+    """
 
     resolver = get_resolver()
     urls = []

@@ -10,7 +10,9 @@ class Command(BaseCommand):
         parser.add_argument('codename', type=str, help='Code name of the permission')
 
     def handle(self, *args, **options):
-
+        """
+            Recursively find url pattern with codename and create permission for it
+        """
         resolver = get_resolver()
         url = dict()
 

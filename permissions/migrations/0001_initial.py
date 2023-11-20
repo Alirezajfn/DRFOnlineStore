@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='UrlsGroup',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
+                ('name', models.CharField(max_length=255, unique=True)),
             ],
         ),
         migrations.CreateModel(
@@ -29,6 +29,14 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=True)),
                 ('description', models.TextField(blank=True, null=True)),
                 ('app_name', models.CharField(blank=True, max_length=255, null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Role',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=255, unique=True)),
+                ('permissions', models.ManyToManyField(blank=True, related_name='roles', to='permissions.PermissionPerUrls')),
             ],
         ),
         migrations.AddField(

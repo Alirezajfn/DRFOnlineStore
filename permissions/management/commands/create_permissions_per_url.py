@@ -7,6 +7,9 @@ class Command(BaseCommand):
     help = 'Create permissions for all urls'
 
     def handle(self, *args, **options):
+        """
+        Recursively find all url patterns with codename and create permission for it
+        """
         resolver = get_resolver()
         urls = []
 

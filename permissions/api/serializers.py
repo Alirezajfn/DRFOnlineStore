@@ -43,6 +43,7 @@ class PermissionCreateSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
+        # if group does not exist, it will be created
         group_name = validated_data.pop('group', None)
         if group_name:
             group, _ = UrlsGroup.objects.get_or_create(name=group_name)
@@ -72,6 +73,7 @@ class PermissionUpdateSerializer(serializers.ModelSerializer):
             'app_name',
         )
 
+    # if group does not exist, it will be created
     def update(self, instance, validated_data):
         group_name = validated_data.pop('group', None)
         if group_name:
