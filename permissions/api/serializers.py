@@ -1,4 +1,4 @@
-from permissions.models import PermissionPerUrls, UrlsGroup
+from permissions.models import PermissionPerUrls, UrlsGroup, Role
 from rest_framework import serializers
 
 
@@ -80,3 +80,82 @@ class PermissionUpdateSerializer(serializers.ModelSerializer):
             group, _ = UrlsGroup.objects.get_or_create(name=group_name)
             validated_data['group'] = group
         return super().update(instance, validated_data)
+
+
+class RoleReadOnlySerializer(serializers.ModelSerializer):
+    permissions = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = Role
+        fields = (
+            'id',
+            'name',
+            'permissions',
+        )
+
+
+class RoleCreateSerializer(serializers.ModelSerializer):
+    permissions = serializers.ListField(child=serializers.CharField(max_length=255), required=False)
+
+    class Meta:
+        model = Role
+        fields = (
+            'id',
+            'name',
+            'permissions',
+        )
+
+    def validate(self, attrs):
+        permissions = attrs.get('permissions', None)
+        if permissions:
+            for permission in permissions:
+                if not PermissionPerUrls.objects.filter(codename=permission).exists():
+                    raise serializers.ValidationError(f"Permission {permission} does not exist")
+        return attrs
+
+    def create(self, validated_data):
+        permissions = validated_data.pop('permissions', None)
+        role = super().create(validated_data)
+        if permissions:
+            for permission in permissions:
+                permission_obj = PermissionPerUrls.objects.get(codename=permission)
+                role.permissions.add(permission_obj)
+        return role
+
+    def to_representation(self, instance):
+        self.fields['permissions'] = PermissionReadOnlySerializer(many=True)
+        return super().to_representation(instance)
+
+
+class RoleUpdateSerializer(serializers.ModelSerializer):
+    permissions = serializers.ListField(child=serializers.CharField(max_length=255), required=False)
+
+    class Meta:
+        model = Role
+        fields = (
+            'id',
+            'name',
+            'permissions',
+        )
+
+    def validate(self, attrs):
+        permissions = attrs.get('permissions', None)
+        if permissions:
+            for permission in permissions:
+                if not PermissionPerUrls.objects.filter(codename=permission).exists():
+                    raise serializers.ValidationError(f"Permission {permission} does not exist")
+        return attrs
+
+    def update(self, instance, validated_data):
+        permissions = validated_data.pop('permissions', None)
+        role = super().update(instance, validated_data)
+        if permissions:
+            role.permissions.clear()
+            for permission in permissions:
+                permission_obj = PermissionPerUrls.objects.get(codename=permission)
+                role.permissions.add(permission_obj)
+        return role
+
+    def to_representation(self, instance):
+        self.fields['permissions'] = PermissionReadOnlySerializer(many=True)
+        return super().to_representation(instance)

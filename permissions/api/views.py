@@ -2,11 +2,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 
 from permissions.api.filters import PermissionFilterSet
-from permissions.models import PermissionPerUrls
+from permissions.models import PermissionPerUrls, Role
 from rest_framework import mixins, viewsets, status, filters
 from rest_framework.permissions import IsAdminUser
 
-from permissions.api.serializers import PermissionReadOnlySerializer, PermissionCreateSerializer, PermissionUpdateSerializer
+from permissions.api.serializers import PermissionReadOnlySerializer, PermissionCreateSerializer, \
+    PermissionUpdateSerializer, RoleReadOnlySerializer, RoleCreateSerializer, RoleUpdateSerializer
 
 
 class PermissionListView(mixins.ListModelMixin,
@@ -41,3 +42,27 @@ class PermissionDetailView(mixins.DestroyModelMixin,
         instance.is_active = False
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class RoleListView(mixins.ListModelMixin,
+                   mixins.CreateModelMixin,
+                   viewsets.GenericViewSet):
+    queryset = Role.objects.all()
+    permission_classes = [IsAdminUser]
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return RoleCreateSerializer
+        return RoleReadOnlySerializer
+
+
+class RoleDetailView(mixins.UpdateModelMixin,
+                     mixins.RetrieveModelMixin,
+                     viewsets.GenericViewSet):
+    queryset = Role.objects.filter()
+    permission_classes = [IsAdminUser]
+
+    def get_serializer_class(self):
+        if self.action == 'update':
+            return RoleUpdateSerializer
+        return RoleReadOnlySerializer
